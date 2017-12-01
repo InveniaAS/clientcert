@@ -23,17 +23,22 @@ public class X509AuthenticationServer extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().authenticated().and().x509().subjectPrincipalRegex("CN=(.*?)(?:,|$)").userDetailsService(userDetailsService());
+        http.authorizeRequests()
+            .antMatchers("/user").authenticated().and()
+            .x509().subjectPrincipalRegex("CN=(.*?)(?:,|$)")
+            .userDetailsService(userDetailsService());
+        //http.authorizeRequests().antMatchers("/**").anonymous();
+        http.logout().logoutUrl("/logout")
+            .logoutSuccessUrl("/index").invalidateHttpSession(true).and();
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
             public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-                //if (username.equals("cid")) {
-                    return new User(username, "", AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
-                //}
-                //throw new UsernameNotFoundException("User not found!");
+                return new User(username,
+                                "",
+                                AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
             }
         };
     }

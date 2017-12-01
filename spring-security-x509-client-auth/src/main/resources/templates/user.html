@@ -5,5 +5,7 @@
     </head>
     <body>
         <h2>Hello <span th:text="${username}"/>!</h2>
+        Your certificate is valid until <span th:text="${validto}"/>.
+        <a th:href="logout">Logout</a>
     </body>
 </html>
