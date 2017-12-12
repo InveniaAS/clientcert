@@ -4,8 +4,13 @@
         <title>X.509 Authentication Demo</title>
     </head>
     <body>
-        <h2>Hello <span th:text="${username}"/>!</h2>
-        Your certificate is valid until <span th:text="${validto}"/>.
-        <a th:href="logout">Logout</a>
+        <div th:switch="${username} == null">
+            <div th:case="${true}">You are not logged in</div>
+            <div th:case="${false}">
+                <h2>Hello <span th:text="${username}"/>!</h2>
+                Your certificate is valid until <span th:text="${validto}"/>.
+                <a th:href="logout">Logout</a>
+            </div>
+        </div>
     </body>
 </html>

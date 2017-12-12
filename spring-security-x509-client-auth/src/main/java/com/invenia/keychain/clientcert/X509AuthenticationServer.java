@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -22,12 +23,19 @@ public class X509AuthenticationServer extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/index/**");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/user").authenticated().and()
-            .x509().subjectPrincipalRegex("CN=(.*?)(?:,|$)")
+            .antMatchers("/index").permitAll();
+        http.authorizeRequests()
+            .antMatchers("/signUp").authenticated().and()
+            .x509()
             .userDetailsService(userDetailsService());
-        //http.authorizeRequests().antMatchers("/**").anonymous();
+        http.authorizeRequests().anyRequest().permitAll();
         http.logout().logoutUrl("/logout")
             .logoutSuccessUrl("/index").invalidateHttpSession(true).and();
     }
